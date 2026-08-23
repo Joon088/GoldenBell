@@ -103,7 +103,7 @@ class GoldenBellView(discord.ui.View):
 
         if kind == "pt":
             self.add_item(RecordButton(ticket_id, kind, "10분", 1, disabled))
-            self.add_item(RecordButton(ticket_id, kind, "20분", 2, disabled))
+            self.add_item(RecordButton(ticket_id, kind, "20분", 1, disabled))
         else:
             self.add_item(RecordButton(ticket_id, kind, "1회 등록", 1, disabled))
 
