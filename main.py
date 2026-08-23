@@ -102,21 +102,21 @@ class GoldenBellView(discord.ui.View):
         super().__init__(timeout=None)
 
         if kind == "pt":
-            self.add_item(RecordButton(ticket_id, kind, "10분", 1, disabled))
-            self.add_item(RecordButton(ticket_id, kind, "20분", 1, disabled))
+            self.add_item(RecordButton(ticket_id, kind, "10분", 1, "10m", disabled))
+            self.add_item(RecordButton(ticket_id, kind, "20분", 1, "20m", disabled))
         else:
-            self.add_item(RecordButton(ticket_id, kind, "1회 등록", 1, disabled))
+            self.add_item(RecordButton(ticket_id, kind, "1회 등록", 1, "once", disabled))
 
         self.add_item(UndoButton(ticket_id, kind, disabled))
         self.add_item(CloseButton(ticket_id, kind, disabled))
 
 
 class RecordButton(discord.ui.Button):
-    def __init__(self, ticket_id, kind, label, delta, disabled=False):
+    def __init__(self, ticket_id, kind, label, delta, action_key, disabled=False):
         super().__init__(
             label=label,
             style=discord.ButtonStyle.primary,
-            custom_id=f"gb:{ticket_id}:{kind}:add:{delta}",
+            custom_id=f"gb:{ticket_id}:{kind}:add:{action_key}",
             disabled=disabled,
         )
         self.ticket_id = ticket_id
