@@ -64,6 +64,7 @@ async def build_ticket_embed(ticket: dict, final: bool = False) -> discord.Embed
         title=f"{'✅ 마감' if final else '🔔 진행 중'} · {kind_name(ticket['kind'])}",
         color=0x2ECC71 if final else color_for(ticket["kind"]),
     )
+    embed.add_field(name="🎫 티켓번호", value=f"**#{ticket['id']}**", inline=False)
     embed.add_field(name="목표 횟수", value=f"**{target}회**", inline=True)
     embed.add_field(name="현재 횟수", value=f"**{current}회**", inline=True)
     embed.add_field(name="남은 횟수", value=f"**{remaining}회**", inline=True)
