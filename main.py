@@ -86,11 +86,13 @@ async def build_ticket_embed(ticket: dict, final: bool = False) -> discord.Embed
         value=text,
         inline=False,
     )
-    embed.set_footer(
-        text="닉네임(멘션) | 계좌번호 | 횟수 | 정산금액"
-        if final else
-        ("10분 = +1회 · 20분 = +2회" if ticket["kind"] == "pt" else "1회 등록 = +1회")
-    )
+    if final:
+        footer_text = f"티켓번호 #{ticket['id']} · 닉네임(멘션) | 계좌번호 | 횟수 | 정산금액"
+    else:
+        rule_text = "10분 = +1회 · 20분 = +2회" if ticket["kind"] == "pt" else "1회 등록 = +1회"
+        footer_text = f"티켓번호 #{ticket['id']} · {rule_text}"
+
+    embed.set_footer(text=footer_text)
     return embed
 
 
