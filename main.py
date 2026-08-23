@@ -16,6 +16,7 @@ STEROID_CHANNEL_ID = int(os.getenv("STEROID_CHANNEL_ID", "0") or 0)
 
 PT_RATE = 50_000_000
 STEROID_RATE = 20_000_000
+BOT_VERSION = "v6.0"
 
 db = Database(DATABASE_URL)
 
@@ -61,7 +62,7 @@ async def build_ticket_embed(ticket: dict, final: bool = False) -> discord.Embed
     rate = rate_for(ticket["kind"])
 
     embed = discord.Embed(
-        title=f"{'✅ 마감' if final else '🔔 진행 중'} · {kind_name(ticket['kind'])}",
+        title=f"{'✅ 마감' if final else '🔔 진행 중'} · {kind_name(ticket['kind'])} · #{ticket['id']}",
         color=0x2ECC71 if final else color_for(ticket["kind"]),
     )
     embed.add_field(name="🎫 티켓번호", value=f"**#{ticket['id']}**", inline=False)
@@ -463,9 +464,18 @@ async def manual_subtract(
     )
 
 
+
+@bot.tree.command(name="버전", description="현재 실행 중인 골든벨봇 버전을 확인합니다.")
+async def version(interaction: discord.Interaction):
+    await interaction.response.send_message(
+        f"🤖 GoldenBell **{BOT_VERSION}**",
+        ephemeral=True,
+    )
+
+
 @bot.event
 async def on_ready():
-    print(f"로그인 완료: {bot.user} ({bot.user.id})")
+    print(f"로그인 완료: {bot.user} ({bot.user.id}) | GoldenBell {BOT_VERSION}")
 
 
 if __name__ == "__main__":
