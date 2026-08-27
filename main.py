@@ -16,7 +16,6 @@ STEROID_CHANNEL_ID = int(os.getenv("STEROID_CHANNEL_ID", "0") or 0)
 
 PT_RATE = 50_000_000
 STEROID_RATE = 20_000_000
-BOT_VERSION = "v6.0"
 
 db = Database(DATABASE_URL)
 
@@ -62,7 +61,7 @@ async def build_ticket_embed(ticket: dict, final: bool = False) -> discord.Embed
     rate = rate_for(ticket["kind"])
 
     embed = discord.Embed(
-        title=f"{'✅ 마감' if final else '🔔 진행 중'} · {kind_name(ticket['kind'])} · #{ticket['id']}",
+        title=f"{'✅ 마감' if final else '🔔 진행 중'} · {kind_name(ticket['kind'])}",
         color=0x2ECC71 if final else color_for(ticket["kind"]),
     )
     embed.add_field(name="🎫 티켓번호", value=f"**#{ticket['id']}**", inline=False)
@@ -91,7 +90,7 @@ async def build_ticket_embed(ticket: dict, final: bool = False) -> discord.Embed
     if final:
         footer_text = f"티켓번호 #{ticket['id']} · 닉네임(멘션) | 계좌번호 | 횟수 | 정산금액"
     else:
-        rule_text = "10분 = +1회 · 20분 = +1회" if ticket["kind"] == "pt" else "1회 등록 = +1회"
+        rule_text = "10분 = +1회 · 20분 = +2회" if ticket["kind"] == "pt" else "1회 등록 = +1회"
         footer_text = f"티켓번호 #{ticket['id']} · {rule_text}"
 
     embed.set_footer(text=footer_text)
@@ -103,21 +102,21 @@ class GoldenBellView(discord.ui.View):
         super().__init__(timeout=None)
 
         if kind == "pt":
-            self.add_item(RecordButton(ticket_id, kind, "10분", 1, "10m", disabled))
-            self.add_item(RecordButton(ticket_id, kind, "20분", 1, "20m", disabled))
+            self.add_item(RecordButton(ticket_id, kind, "10분", 1, disabled))
+            self.add_item(RecordButton(ticket_id, kind, "20분", 2, disabled))
         else:
-            self.add_item(RecordButton(ticket_id, kind, "1회 등록", 1, "once", disabled))
+            self.add_item(RecordButton(ticket_id, kind, "1회 등록", 1, disabled))
 
         self.add_item(UndoButton(ticket_id, kind, disabled))
         self.add_item(CloseButton(ticket_id, kind, disabled))
 
 
 class RecordButton(discord.ui.Button):
-    def __init__(self, ticket_id, kind, label, delta, action_key, disabled=False):
+    def __init__(self, ticket_id, kind, label, delta, disabled=False):
         super().__init__(
             label=label,
             style=discord.ButtonStyle.primary,
-            custom_id=f"gb:{ticket_id}:{kind}:add:{action_key}",
+            custom_id=f"gb:{ticket_id}:{kind}:add:{delta}",
             disabled=disabled,
         )
         self.ticket_id = ticket_id
@@ -464,18 +463,9 @@ async def manual_subtract(
     )
 
 
-
-@bot.tree.command(name="버전", description="현재 실행 중인 골든벨봇 버전을 확인합니다.")
-async def version(interaction: discord.Interaction):
-    await interaction.response.send_message(
-        f"🤖 GoldenBell **{BOT_VERSION}**",
-        ephemeral=True,
-    )
-
-
 @bot.event
 async def on_ready():
-    print(f"로그인 완료: {bot.user} ({bot.user.id}) | GoldenBell {BOT_VERSION}")
+    print(f"로그인 완료: {bot.user} ({bot.user.id})")
 
 
 if __name__ == "__main__":
